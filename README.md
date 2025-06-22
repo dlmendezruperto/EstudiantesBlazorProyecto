@@ -1,4 +1,4 @@
-# 📚 Aplicación de Registro de Estudiantes (Blazor Server)
+# 📚 Aplicación de Registro de Estudiantes (Blazor Server) hecho por Diana Ruperto
 
 Este proyecto permite registrar y visualizar estudiantes usando Blazor Server, .NET 8 y Entity Framework Core.
 
@@ -25,22 +25,19 @@ Este proyecto permite registrar y visualizar estudiantes usando Blazor Server, .
 
 raiz/
 ├── Components/
-│   ├── Layout/
-│   │   ├── MainLayout.razor         # Solo estructura del layout
-│   │   ├── MainLayout.razor.css    # Estilos específicos
-│   │   └── NavMenu.razor          #Barra de navegación
-│   └── Pages/
-│   │   ├── Estudiantes.razor  #Donde está el formulario
-│   │   └── Home.razor          #Página de inicio
-│   ├── _Imports.razor          #Barra de navegación
-│   ├── App.razor
-│   └── Routes.razor          #Solo lógica de enrutamiento
+│ ├── Layout/
+│ │ ├── MainLayout.razor # Layout principal
+│ │ ├── MainLayout.razor.css # Estilos del layout
+│ │ └── NavMenu.razor # Barra de navegación
+│ └── Pages/
+│ ├── Estudiantes.razor #Formulario
+│ └── Home.razor # Página de inicio y CRUD de estudiantes
 ├── wwwroot/
-│   ├── css/
-│   │   └── app.css                # Estilos globales
-│   └── bootstrap/
-│       └── bootstrap.min.css
-└── Program.cs                # Configuración principal de la aplicación Blazor Server
+│ ├── css/
+│ │ └── app.css # Estilos globales
+│ └── bootstrap/
+│ └── bootstrap.min.css # Framework CSS
+└── Program.cs # Configuración principal
 
 - `Models/Estudiante.cs`: modelo del estudiante
 - `Pages/Estudiantes.razor`: formulario y listado
