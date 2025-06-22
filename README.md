@@ -24,11 +24,15 @@ Este proyecto permite registrar y visualizar estudiantes usando Blazor Server, .
 ## 📂 Estructura
 
 raiz → Components
+
   → Layout (MainLayout.razor, NavMenu.razor)
   → Pages (Estudiantes.razor, Home.razor)
+  
 raiz → wwwroot
+
   → css (app.css)
   → bootstrap (bootstrap.min.css)
+  
 raiz → Program.cs
 
 - `Models/Estudiante.cs`: modelo del estudiante
