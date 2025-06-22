@@ -1,4 +1,13 @@
-﻿USE [EstudiantesDB]
+-- 1. Crear la base de datos (si no existe)
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'EstudiantesDB')
+BEGIN
+    CREATE DATABASE [EstudiantesDB];
+    PRINT 'Base de datos EstudiantesDB creada.';
+END
+GO
+
+-- 2. Usar la BD
+USE [EstudiantesDB];
 GO
 /****** Object:  Table [dbo].[__EFMigrationsHistory]    Script Date: 22/06/2025 02:14:11 a. m. ******/
 SET ANSI_NULLS ON
