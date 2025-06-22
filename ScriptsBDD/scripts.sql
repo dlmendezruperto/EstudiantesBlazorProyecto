@@ -1,5 +1,5 @@
 -- 1. Crear la base de datos (si no existe)
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'EstudiantesDB')
+IF DB_ID('EstudiantesDB') IS NULL
 BEGIN
     CREATE DATABASE [EstudiantesDB];
     PRINT 'Base de datos EstudiantesDB creada.';
