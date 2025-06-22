@@ -1,0 +1,215 @@
+﻿/* ===== Título principal ===== */
+h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+    border-bottom: 2px solid #2e7d32;
+    padding-bottom: 0.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ===== Botón Agregar Nuevo Estudiante ===== */
+.add-button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.btn-custom {
+    background-color: #2e7d32; /* verde */
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .btn-custom:hover {
+        background-color: #2e7d32; /* tono más oscuro */
+        opacity: 0.9;
+    }
+
+/* ===== QuickGrid estilo compacto ===== */
+.compact-table {
+    font-size: 1rem;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .compact-table th,
+    .compact-table td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    .compact-table thead th {
+        background-color: #e0e7ff !important; /* azul suave */
+        color: #4f46e5 !important; /* texto azul */
+        font-weight: 600;
+        white-space: nowrap;
+        background-image: none !important;
+    }
+
+    .compact-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .compact-table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Columnas específicas */
+    .compact-table .email-column {
+        max-width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .compact-table .actions-column {
+        white-space: nowrap;
+        width: 120px;
+    }
+
+/* ===== Botones de acciones en tabla ===== */
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+    line-height: 1.2;
+    border-radius: 0.25rem;
+}
+
+.btn-warning, .btn-edit {
+    background-color: #ffc107;
+    color: #212529;
+    border: none;
+    cursor: pointer;
+}
+
+    .btn-warning:hover, .btn-edit:hover {
+        background-color: #e0a800;
+    }
+
+.btn-danger, .btn-delete {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+    .btn-danger:hover, .btn-delete:hover {
+        background-color: #c82333;
+    }
+
+/* ===== Paginación ===== */
+.paginator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 20px 0;
+    padding: 10px;
+}
+
+    .paginator button {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+        border: 1px solid #d1d5db;
+        background-color: white;
+        border-radius: 4px;
+        color: #2e7d32;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .paginator button:hover:not(:disabled) {
+            background-color: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .paginator button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+    .paginator .current-page {
+        font-weight: 600;
+        color: #2e7d32;
+        margin: 0 12px;
+    }
+
+/* ===== Responsividad ===== */
+@media (max-width: 992px) {
+    .actions-column {
+        display: flex;
+        gap: 0.3rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .btn-sm {
+        width: 100%;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .compact-table td {
+        white-space: normal; /* Permite salto de línea en móviles */
+    }
+}
+
+/* === ESTILOS OBLIGATORIOS PARA LA TABLA === */
+.mi-quickgrid {
+    --border-color: #d1d5db; /* Color personalizable */
+    width: 100%;
+    margin: 1rem auto;
+    border-collapse: separate !important; /* Clave para bordes */
+    border-spacing: 0;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 0 0 1px var(--border-color) !important;
+}
+
+/* Celdas con bordes VISIBLES */
+.mi-quickgrid th,
+.mi-quickgrid td {
+    border-right: 1px solid var(--border-color) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding: 12px 15px !important;
+}
+
+/* Elimina borde derecho de la última columna */
+.mi-quickgrid th:last-child,
+.mi-quickgrid td:last-child {
+    border-right: none !important;
+}
+
+/* Rayas alternas */
+.mi-quickgrid tr:nth-child(even) {
+    background-color: #f8f9fa !important;
+}
+
+/* Encabezado con estilo */
+.mi-quickgrid th {
+    background-color: #3a0647 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    position: sticky !important;
+    top: 0 !important;
+}
+
+/* Efecto hover */
+.mi-quickgrid tr:hover {
+    background-color: #e9ecef !important;
+    transition: background-color 0.2s !important;
+}

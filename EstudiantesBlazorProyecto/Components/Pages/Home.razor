@@ -1,0 +1,178 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using EstudiantesBlazorProyecto.Models
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject EstudiantesBlazorProyecto.Data.AppDbContext _context
+@inject NavigationManager NavigationManager
+
+<h1>Bienvenido al Instituto AB Systems</h1>
+
+<div class="add-button-container">
+    <button class="btn-custom mb-3" @onclick="NuevoEstudiante">
+        Agregar Nuevo Estudiante
+    </button>
+</div>
+
+@if (estudiantes.Any())
+{
+    <QuickGrid Items="@estudiantesPagados" @ref="miGrid" Class="mi-tabla-force">
+        <!-- Eliminé Theme="corporate" -->
+        <PropertyColumn Property="@(e => e.Nombres)" Title="Nombre" />
+        <PropertyColumn Property="@(e => e.Apellidos)" Title="Apellido" />
+        <PropertyColumn Property="@(e => e.Carrera)" Title="Carrera" />
+        <PropertyColumn Property="@(e => e.Email)" Class="email-column" />
+        <TemplateColumn Title="Becado" Class="text-center">
+            @if ((context as Estudiante).EsBecado)
+            {
+                <span class="badge bg-success">Sí</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary">No</span>
+            }
+        </TemplateColumn>
+        <TemplateColumn Title="Acciones" Class="actions-column">
+            <button @onclick="() => EditarEstudiante((context as Estudiante).Id)"
+                    class="btn-edit">
+                <i class="bi bi-pencil"></i>
+            </button>
+            <button @onclick="() => EliminarEstudiante((context as Estudiante).Id)"
+                    class="btn-delete">
+                <i class="bi bi-trash"></i>
+            </button>
+        </TemplateColumn>
+    </QuickGrid>
+
+    <!-- Controles de paginación personalizados -->
+    <div class="paginator">
+        <button @onclick="GoToFirstPage" disabled="@(currentPage == 0)">
+            &lt;&lt;
+        </button>
+        <button @onclick="GoToPreviousPage" disabled="@(currentPage == 0)">
+            &lt;
+        </button>
+        <span class="current-page">
+            Página @(currentPage + 1) de @totalPages
+        </span>
+        <button @onclick="GoToNextPage" disabled="@(currentPage >= totalPages - 1)">
+            &gt;
+        </button>
+        <button @onclick="GoToLastPage" disabled="@(currentPage >= totalPages - 1)">
+            &gt;&gt;
+        </button>
+    </div>
+}
+else
+{
+    <p>No hay estudiantes registrados.</p>
+}
+
+@code {
+    private List<Estudiante> estudiantes = new();
+    private int currentPage = 0;
+    private const int ItemsPerPage = 20;
+    private int totalPages;
+    private IQueryable<Estudiante>? estudiantesPagados;
+
+    // Propiedad calculada para la paginación
+    private PaginationState pagination = new()
+    {
+        ItemsPerPage = ItemsPerPage
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarEstudiantes();
+    }
+
+    private async Task CargarEstudiantes()
+    {
+        estudiantes = await _context.Estudiantes.ToListAsync();
+        totalPages = (int)Math.Ceiling((double)estudiantes.Count / ItemsPerPage);
+        ActualizarDatosPagina();
+    }
+
+    private void ActualizarDatosPagina()
+    {
+        // Eliminamos la llamada a GoToPage ya que no existe en PaginationState
+        estudiantesPagados = estudiantes
+            .Skip(currentPage * ItemsPerPage)
+            .Take(ItemsPerPage)
+            .AsQueryable();
+    }
+
+    private void GoToFirstPage()
+    {
+        currentPage = 0;
+        ActualizarDatosPagina();
+    }
+
+    private void GoToPreviousPage()
+    {
+        if (currentPage > 0)
+        {
+            currentPage--;
+            ActualizarDatosPagina();
+        }
+    }
+
+    private void GoToNextPage()
+    {
+        if (currentPage < totalPages - 1)
+        {
+            currentPage++;
+            ActualizarDatosPagina();
+        }
+    }
+
+    private void GoToLastPage()
+    {
+        currentPage = totalPages - 1;
+        ActualizarDatosPagina();
+    }
+
+    private void NuevoEstudiante()
+    {
+        NavigationManager.NavigateTo("/estudiantes");
+    }
+
+    private void EditarEstudiante(int id)
+    {
+        NavigationManager.NavigateTo($"/estudiantes/{id}", forceLoad: true);
+    }
+
+    private async Task EliminarEstudiante(int id)
+    {
+        var estudiante = await _context.Estudiantes.FindAsync(id);
+        if (estudiante != null)
+        {
+            _context.Estudiantes.Remove(estudiante);
+            await _context.SaveChangesAsync();
+
+            // Recalcular después de eliminar
+            estudiantes = await _context.Estudiantes.ToListAsync();
+            totalPages = (int)Math.Ceiling((double)estudiantes.Count / ItemsPerPage);
+
+            // Ajustar página actual si es necesario
+            if (currentPage >= totalPages && totalPages > 0)
+            {
+                currentPage = totalPages - 1;
+            }
+
+            ActualizarDatosPagina();
+        }
+    }
+
+    private QuickGrid<Estudiante>? miGrid;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && miGrid is not null)
+        {
+            // Fuerza la regeneración de estilos
+            await miGrid.RefreshDataAsync();
+        }
+    }
+}

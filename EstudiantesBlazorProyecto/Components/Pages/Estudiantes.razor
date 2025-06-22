@@ -1,0 +1,190 @@
+﻿@page "/estudiantes"
+@page "/estudiantes/{Id:int}"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using EstudiantesBlazorProyecto.Models
+@using System.Text.Json
+@using Microsoft.AspNetCore.Components
+@inject EstudiantesBlazorProyecto.Data.AppDbContext _context
+@inject NavigationManager NavigationManager
+
+<h3>@(Id == 0 ? "Registrar nuevo estudiante" : "Editar estudiante")</h3>
+
+<div class="edit-form-container">
+    <EditForm Model="@nuevoEstudiante" OnValidSubmit="GuardarEstudiante" class="edit-form">
+        <div class="form-fields-grid">
+            <!-- Campos en grupos de dos columnas -->
+            <div class="form-group">
+                <label>Nombres:</label>
+                <InputText @bind-Value="nuevoEstudiante.Nombres" class="form-control" />
+                <ValidationMessage For="@(() => nuevoEstudiante.Nombres)" />
+            </div>
+            
+            <div class="form-group">
+                <label>Apellidos:</label>
+                <InputText @bind-Value="nuevoEstudiante.Apellidos" class="form-control" />
+                <ValidationMessage For="@(() => nuevoEstudiante.Apellidos)" />
+            </div>
+            
+            <!-- Campos que ocupan ancho completo -->
+            <div class="form-group span-full">
+                <label>Dirección:</label>
+                <InputText @bind-Value="nuevoEstudiante.Direccion" class="form-control" />
+                <ValidationMessage For="@(() => nuevoEstudiante.Direccion)" />
+            </div>
+
+    <div class="form-group mb-3">
+        <label>Sexo:</label>
+        <InputSelect @bind-Value="nuevoEstudiante.Sexo" class="form-control">
+            <option value="">Seleccione...</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => nuevoEstudiante.Sexo)" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label>CURP:</label>
+        <InputText @bind-Value="nuevoEstudiante.CURP" class="form-control" maxlength="18" />
+        <ValidationMessage For="@(() => nuevoEstudiante.CURP)" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Teléfono:</label>
+        <InputText @bind-Value="nuevoEstudiante.Telefono" class="form-control" />
+        <ValidationMessage For="@(() => nuevoEstudiante.Telefono)" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Email:</label>
+        <InputText @bind-Value="nuevoEstudiante.Email" class="form-control" />
+        <ValidationMessage For="@(() => nuevoEstudiante.Email)" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Carrera:</label>
+        <InputSelect @bind-Value="nuevoEstudiante.Carrera" class="form-control">
+            <option value="">Seleccione...</option>
+            <option value="Ingeniería en Sistemas">Ingeniería en Sistemas</option>
+            <option value="Biología">Biología</option>
+            <option value="Derecho">Derecho</option>
+            <option value="Comercio">Comercio</option>
+            <option value="Educación">Educación</option>
+            <option value="Psicología">Psicología</option>
+            <option value="Matemáticas">Matemáticas</option>
+            <option value="Química">Química</option>
+            <option value="Economía">Economía</option>
+            <option value="Administración">Administración</option>
+            <option value="Mercadotecnia">Mercadotecnia</option>
+
+        </InputSelect>
+        <ValidationMessage For="@(() => nuevoEstudiante.Carrera)" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Modalidad:</label>
+        <InputSelect @bind-Value="nuevoEstudiante.Modalidad" class="form-control">
+            <option value="">Seleccione...</option>
+            <option value="Presencial">Presencial</option>
+            <option value="Online">Online</option>
+            <option value="Ambos">Ambos</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => nuevoEstudiante.Modalidad)" />
+    </div>
+
+            <div class="form-check">
+                <InputCheckbox @bind-Value="nuevoEstudiante.EsBecado" id="esBecado" class="form-check-input" />
+                <label for="esBecado" class="form-check-label">¿Es becado?</label>
+            </div>
+
+    <!-- Campos Opcionales -->
+    <div class="form-group mb-3">
+        <label>Descripción personal (opcional):</label>
+        <InputTextArea @bind-Value="nuevoEstudiante.DescripcionPersonal" class="form-control" />
+    </div>
+
+    <div class="form-check">
+                <InputCheckbox @bind-Value="nuevoEstudiante.TieneMascotas" id="mascota" class="form-check-input" />
+        <label for="mascota" class="form-check-label">¿Tiene mascotas?</label>
+    </div>
+
+    @if (nuevoEstudiante.TieneMascotas)
+    {
+        <div class="form-group mb-3">
+            <label>¿Cuáles? (opcional):</label>
+            <InputText @bind-Value="nuevoEstudiante.TipoMascotas" class="form-control" />
+        </div>
+    }
+
+    <div class="form-group mb-3">
+        <label>Horario de comida (opcional):</label>
+        <InputText @bind-Value="nuevoEstudiante.HorarioComida" class="form-control" />
+    </div>
+        </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">@(Id == 0 ? "Guardar" : "Actualizar")</button>
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+            </div>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }  // Recibe el ID desde la ruta (/estudiantes/1)
+
+    private Estudiante nuevoEstudiante = new();
+    private string mensajeDebug = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == 0) // Modo creación
+        {
+            nuevoEstudiante = new Estudiante
+            {
+                // Inicializa solo campos obligatorios
+                FechaNacimiento = DateTime.Now.AddYears(-18),
+                // Los opcionales quedarán como null/false
+            }; // Reinicia el modelo
+        }
+        else // Modo edición
+        {
+            nuevoEstudiante = await _context.Estudiantes.FindAsync(Id) ?? new();
+        }
+    }
+
+    private async Task GuardarEstudiante()
+    {
+        try
+        {
+            if (Id == 0) // Crear nuevo
+            {
+                _context.Estudiantes.Add(nuevoEstudiante);
+                mensajeDebug = "✅ Estudiante registrado!";
+            }
+            else // Editar existente
+            {
+                _context.Estudiantes.Update(nuevoEstudiante);
+                mensajeDebug = "✅ Estudiante actualizado!";
+            }
+
+            int cambios = await _context.SaveChangesAsync();
+
+            if (cambios > 0) // Verifica que realmente se guardó
+            {
+                NavigationManager.NavigateTo("/", forceLoad: true);
+            }
+            else
+            {
+                mensajeDebug = "⚠️ No se realizaron cambios en la base de datos.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeDebug = $"❌ Error: {ex.Message}";
+            Console.WriteLine($"ERROR: {ex}");
+        }
+    }
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
